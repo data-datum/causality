@@ -1,65 +1,81 @@
 # Causal Inference
 
-Introducción práctica a la **inferencia causal** utilizando Python y el dataset **Titanic**.
+Introducción práctica a la **inferencia causal** con Python, usando el dataset **Titanic**.
 
-Este repositorio acompaña un recorrido progresivo por los principales conceptos de causalidad, desde la formulación de una pregunta causal y la construcción de **DAGs (Directed Acyclic Graphs)** hasta la identificación y estimación de efectos causales.
+Este repositorio acompaña un recorrido progresivo por los principales conceptos de causalidad: desde formular una pregunta causal y construir un **DAG** (*Directed Acyclic Graph*), hasta identificar y estimar efectos causales con distintos métodos sobre datos observacionales.
 
-El objetivo es aprender a distinguir entre **asociación y causalidad** y entender qué supuestos son necesarios para poder estimar un efecto causal a partir de datos observacionales.
+El objetivo es aprender a distinguir entre **asociación y causalidad** y entender qué supuestos hacen falta para estimar un efecto causal.
 
 ---
 
 ## 📚 Contenidos
 
-El repositorio está organizado como una serie de notebooks que construyen los conceptos de manera progresiva.
+Los notebooks están pensados para leerse **en orden**: cada uno retoma lo anterior.
+
+| # | Notebook | Tema |
+|---|----------|------|
+| 01 | [`01_hipotesis_causales_DAG.ipynb`](01_hipotesis_causales_DAG.ipynb) | Preguntas causales, hipótesis y DAGs |
+| 02 | [`02_colisionadores_confusores_mediadores.ipynb`](02_colisionadores_confusores_mediadores.ipynb) | Confusores, mediadores, colisionadores y criterio de ajuste |
+| 03 | [`03_PS_IPW.ipynb`](03_PS_IPW.ipynb) | Propensity Score e Inverse Probability Weighting |
+| 04 | [`04_ATE_ATT_ATC_CATE.ipynb`](04_ATE_ATT_ATC_CATE.ipynb) | ATE, ATT, ATC y CATE |
+| 05 | [`05_propensity_score_matching.ipynb`](05_propensity_score_matching.ipynb) | Propensity Score Matching |
+| 06 | [`06_metalearners.ipynb`](06_metalearners.ipynb) | Metalearners para efectos heterogéneos |
+| 07 | [`07_DiD.ipynb`](07_DiD.ipynb) | Diferencias en diferencias (DiD) |
 
 ### 01 — Hipótesis causales y DAG
 
-**Notebook:** `01_hipotesis_causales_DAG.ipynb`
-
-Introducción al razonamiento causal a partir de una pregunta concreta sobre el dataset Titanic:
+Punto de partida: una pregunta concreta sobre el Titanic.
 
 > **¿Cuál es el efecto causal de `Pclass` sobre `Survived`?**
 
-En este notebook se trabaja sobre:
-
-* Preguntas causales
-* Tratamiento (*treatment*)
-* Outcome
-* Hipótesis causales
-* Diferencia entre correlación y causalidad
-* Variables causales
-* DAGs (*Directed Acyclic Graphs*)
-* Interpretación de las relaciones causales
-* Construcción de un modelo causal inicial
-
----
+- Preguntas causales, tratamiento (*treatment*) y outcome
+- Diferencia entre correlación y causalidad
+- Hipótesis causales y construcción de un DAG inicial
+- Interpretación de las relaciones causales
 
 ### 02 — Confusores, mediadores y colisionadores
 
-**Notebook:** `02_colisionadores_confusores_mediadores.ipynb`
+- Confusores y caminos *backdoor*
+- Mediadores: efecto total vs. efecto directo
+- Colisionadores
+- Por qué **no** conviene ajustar por todas las variables disponibles
+- Criterio de ajuste e identificación de *adjustment sets* a partir del DAG
+- Primer contacto con **DoWhy** para formalizar la identificación
 
-Una vez construido el DAG, el siguiente paso es aprender cómo diferentes estructuras causales afectan el análisis.
+### 03 — Propensity Score e IPW
 
-Se estudian:
+- Qué es el propensity score y cómo estimarlo
+- Ponderación por probabilidad inversa (*Inverse Probability Weighting*)
+- Balance de covariables y estimación del efecto
 
-* **Confusores**
-* **Caminos backdoor**
-* **Mediadores**
-* **Efecto total vs. efecto directo**
-* **Colisionadores**
-* Por qué no debemos ajustar automáticamente por todas las variables disponibles
-* Criterio de ajuste (*adjustment*)
-* Identificación de conjuntos de ajuste a partir del DAG
+### 04 — ATE, ATT, ATC y CATE
 
-También se introduce **DoWhy** para comenzar a formalizar el proceso de identificación causal.
+- Distintos estimandos causales: efecto promedio en toda la población (**ATE**), en tratados (**ATT**) y en controles (**ATC**)
+- Efectos condicionales por subgrupos (**CATE**)
+- Cuándo importa cada uno según la pregunta
+
+### 05 — Propensity Score Matching
+
+- Emparejamiento de unidades tratadas y controles según su propensity score
+- Evaluación de la calidad del matching
+- Estimación del efecto a partir de la muestra emparejada
+
+### 06 — Metalearners
+
+- Estimación de efectos heterogéneos con modelos de machine learning
+- Enfoques tipo *S-learner*, *T-learner* y *X-learner*
+
+### 07 — Diferencias en diferencias (DiD)
+
+- Diseños con datos antes/después y grupo tratado/control
+- Supuesto de tendencias paralelas
+- Estimación del efecto del tratamiento
 
 ---
 
-## 🧠 Conceptos principales
+## 🧠 Hilo conductor
 
-El recorrido se basa en una idea fundamental:
-
-```text
+```
 Pregunta causal
       ↓
 Hipótesis causales
@@ -70,57 +86,34 @@ Confusores / Mediadores / Colisionadores
       ↓
 Identificación del efecto
       ↓
-Estimación del efecto
+Estimación (IPW, matching, metalearners, DiD...)
       ↓
 Refutación y análisis de robustez
 ```
 
-La separación entre **identificación** y **estimación** es especialmente importante.
+La separación entre **identificación** y **estimación** es central:
 
-### Identificación
-
-La identificación responde:
-
-> ¿Podemos identificar el efecto causal que nos interesa a partir de nuestras hipótesis causales y del DAG?
-
-### Estimación
-
-La estimación responde:
-
-> Una vez identificado el efecto, ¿cuál es su valor utilizando los datos?
+- **Identificación:** ¿podemos identificar el efecto causal que nos interesa a partir de nuestras hipótesis y del DAG?
+- **Estimación:** una vez identificado, ¿cuál es su valor usando los datos?
 
 ---
 
 ## 🛳️ Dataset
 
-Los notebooks utilizan el dataset **Titanic**, que permite trabajar con variables como:
+Los notebooks usan el dataset **Titanic**, con variables como `pclass`, `survived`, `sex`, `age`, `fare`, `sibsp` y `parch`, entre otras.
 
-* `pclass`
-* `survived`
-* `sex`
-* `age`
-* `fare`
-* `sibsp`
-* `parch`
-* entre otras.
-
-El dataset se utiliza principalmente como recurso didáctico para construir ejemplos de razonamiento causal.
-
-Es importante destacar que un DAG representa **supuestos causales**, no relaciones que puedan demostrarse únicamente observando las correlaciones presentes en el dataset.
+Se usa como recurso didáctico. Un DAG representa **supuestos causales**, no algo que pueda demostrarse solo mirando las correlaciones del dataset.
 
 ---
 
 ## 🛠️ Tecnologías
 
-El proyecto utiliza principalmente:
-
-* Python
-* Jupyter Notebook
-* pandas
-* NumPy
-* seaborn
-* matplotlib
-* DoWhy
+- Python
+- Jupyter Notebook
+- pandas, NumPy
+- seaborn, matplotlib
+- scikit-learn
+- DoWhy
 
 ---
 
@@ -133,82 +126,60 @@ git clone https://github.com/data-datum/causality.git
 cd causality
 ```
 
-Instalá las dependencias necesarias:
+Creá un entorno virtual (opcional, pero recomendado) e instalá las dependencias:
 
 ```bash
-pip install pandas numpy seaborn matplotlib dowhy jupyter
+python -m venv .venv
+source .venv/bin/activate   # En Windows: .venv\Scripts\activate
+
+pip install pandas numpy seaborn matplotlib scikit-learn dowhy jupyter
 ```
 
-Luego iniciá Jupyter:
+Iniciá Jupyter y ejecutá los notebooks en orden:
 
 ```bash
 jupyter notebook
 ```
 
-y ejecutá los notebooks en orden.
-
 ---
 
 ## 📂 Estructura del repositorio
 
-```text
+```
 causality/
-│
 ├── 01_hipotesis_causales_DAG.ipynb
 ├── 02_colisionadores_confusores_mediadores.ipynb
-├── README.md
+├── 03_PS_IPW.ipynb
+├── 04_ATE_ATT_ATC_CATE.ipynb
+├── 05_propensity_score_matching.ipynb
+├── 06_metalearners.ipynb
+├── 07_DiD.ipynb
 ├── LICENSE
-└── .gitignore
+└── README.md
 ```
-
-La estructura irá creciendo a medida que se incorporen nuevos conceptos y métodos de inferencia causal.
-
----
-
-## 🔬 Próximos contenidos
-
-El recorrido continuará con temas como:
-
-* Identificación causal
-* Criterio de backdoor
-* Adjustment sets
-* Average Treatment Effect (ATE)
-* Estimación causal con DoWhy
-* Diferentes métodos de estimación
-* Refutación de estimaciones
-* Análisis de robustez
-* Propensity Scores
-* Matching
-* Inverse Probability Weighting
-* Métodos de inferencia causal más avanzados
 
 ---
 
 ## 🎯 Objetivo del proyecto
 
-El objetivo no es solamente aprender a utilizar una librería, sino desarrollar una forma de **pensar causalmente sobre los datos**.
+No se trata solo de aprender a usar una librería, sino de desarrollar una forma de **pensar causalmente sobre los datos**. En particular, buscamos responder:
 
-En particular, el proyecto busca responder preguntas como:
-
-* ¿Qué significa que una variable sea una causa?
-* ¿Qué diferencia existe entre asociación y causalidad?
-* ¿Qué variables debemos controlar?
-* ¿Cuándo controlar una variable puede introducir sesgo?
-* ¿Cómo podemos representar nuestros supuestos mediante un DAG?
-* ¿Qué efectos causales pueden identificarse a partir de esos supuestos?
-* ¿Cómo podemos estimar y evaluar esos efectos utilizando datos?
+- ¿Qué significa que una variable sea causa de otra?
+- ¿Qué diferencia hay entre asociación y causalidad?
+- ¿Qué variables debemos controlar y cuándo controlar puede introducir sesgo?
+- ¿Cómo representamos nuestros supuestos con un DAG?
+- ¿Qué efectos pueden identificarse a partir de esos supuestos?
+- ¿Cómo estimamos y evaluamos esos efectos con datos?
 
 ---
 
 ## 📖 Referencias
 
-Algunas de las ideas desarrolladas en este proyecto están basadas en conceptos fundamentales de inferencia causal y modelos gráficos causales, particularmente en el trabajo de **Judea Pearl**.
-
-También se utiliza **DoWhy** como herramienta práctica para la identificación, estimación y refutación de efectos causales.
+- Judea Pearl, trabajo fundacional en modelos gráficos causales.
+- [DoWhy](https://github.com/py-why/dowhy): librería para identificación, estimación y refutación de efectos causales.
 
 ---
 
-## 📄 License
+## 📄 Licencia
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
+Este proyecto está bajo la licencia MIT. Ver el archivo [`LICENSE`](LICENSE) para más detalles.
